@@ -15,24 +15,63 @@ public class Board {
         printGameState();
         while(!over){
             place(takeInput());
-            if (player1){
-                player1 = false;
-            }
-            else{
-                player1 = true;
-            }
+            player1 = !player1;
             printGameState();
             over = checkWinCon();
         }
+        System.out.println("Game is over!");
     }
 
     private boolean checkWinCon() {
+//        if(state[0][0] + state[0][1] + state[0][2] == 3 || state[0][0] + state[0][1] + state[0][2] == -3 ) {
+//            return true;
+//        }
+        // Horizontal Check Win Con
+        int row1, row2, row3, col1, col2, col3, diag1, diag2;
+        for (int row = 0; row < 3; row++){
+            int rowTotal = 0;
+            for (int col = 0; col < 3; col++){
+                rowTotal += state[row][col];
+                if (3 == Math.abs(rowTotal) ){
+                    return true;
+                }
+            }
+        }
+
+        // Vertical Check Win Con
+        for (int col = 0; col <3; col++){
+            int colTotal = 0;
+            for (int row = 0; row < 3; row++){
+                colTotal += state[row][col];
+                if (Math.abs(colTotal) == 3){
+                    return true;
+                }
+            }
+        }
+
+        // Left Diagonal Check Win Con
+        int ldtotal = 0;
+        for (int num = 0; num < 3; num++){
+            ldtotal += state[num][num];
+            if(Math.abs(ldtotal) == 3){
+                return true;
+            }
+        }
+
+        // Right Diagonal Check Win Con
+        int rdtotal = 0;
+        for (int num = 0; num <3; num++){
+            rdtotal += state[num][2 - num];
+            if(Math.abs(rdtotal) == 3){
+                return true;
+            }
+        }
 
         return false;
     }
 
+
     private void place(int input){
-        //Index from 0-8
         input--;
         int row = input/3;
         int column = input % 3;
