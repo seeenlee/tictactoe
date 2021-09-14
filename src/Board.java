@@ -1,3 +1,5 @@
+import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Scanner;
 
 public class Board {
@@ -6,6 +8,7 @@ public class Board {
     private boolean over = false;
     private boolean player1 = true;
     Scanner s = new Scanner(System.in);
+    private int third = 200;
 
     public Board(){
         state = new int[LENGTH][LENGTH];
@@ -14,20 +17,15 @@ public class Board {
     public void start(){
         printGameState();
         while(!over){
-            place(takeInput());
-            player1 = !player1;
-            printGameState();
+//            place(takeInput());
+//            printGameState();
             over = checkWinCon();
         }
         System.out.println("Game is over!");
     }
 
     private boolean checkWinCon() {
-//        if(state[0][0] + state[0][1] + state[0][2] == 3 || state[0][0] + state[0][1] + state[0][2] == -3 ) {
-//            return true;
-//        }
         // Horizontal Check Win Con
-        int row1, row2, row3, col1, col2, col3, diag1, diag2;
         for (int row = 0; row < 3; row++){
             int rowTotal = 0;
             for (int col = 0; col < 3; col++){
@@ -66,7 +64,6 @@ public class Board {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -81,66 +78,7 @@ public class Board {
         else{
             state[row][column] = -1;
         }
-
-        /*
-        if (player1){
-            switch (input){
-                case 1:
-                    state[0][0] = 1;
-                    break;
-                case 2:
-                    state[0][1] = 1;
-                    break;
-                case 3:
-                    state[0][2] = 1;
-                    break;
-                case 4:
-                    state[1][0] = 1;
-                    break;
-                case 5:
-                    state[1][1] = 1;
-                    break;
-                case 6:
-                    state[1][2] = 1;
-                    break;
-                case 7:
-                    state[2][0] = 1;
-                    break;
-                case 8:
-                    state[2][1] = 1;
-                    break;
-                case 9:
-                    state[2][2] = 1;
-                    System.out.println("Why is this running");
-                    break;
-            }
-        }
-        else{
-            if (!player1){
-                switch (input){
-                    case 1:
-                        state[0][0] = 0;
-                    case 2:
-                        state[0][1] = 0;
-                    case 3:
-                        state[0][2] = 0;
-                    case 4:
-                        state[1][0] = 0;
-                    case 5:
-                        state[1][1] = 0;
-                    case 6:
-                        state[1][2] = 0;
-                    case 7:
-                        state[2][0] = 0;
-                    case 8:
-                        state[2][1] = 0;
-                    case 9:
-                        state[2][2] = 0;
-                }
-            }
-        }
-
-         */
+        player1 = !player1;
     }
 
     private int takeInput() {
@@ -174,5 +112,46 @@ public class Board {
             }
         }
         System.out.print("\n");
+    }
+
+    public void handleClick(MouseEvent me) {
+        System.out.println("You just clicked: "+me);
+        //while(!over){
+            if(player1){
+                state[me.getY() / third][me.getX() / third] = 1;
+                player1 = !player1;
+            }
+            else{
+                state[me.getY() / third][me.getX() / third] = -1;
+                player1 = !player1;
+            }
+            printGameState();
+            over = checkWinCon();
+            if (over){
+                System.out.println("Game is over!");
+                System.exit(0);
+            }
+        //}
+    }
+
+    public void tick() {
+    }
+
+    public void draw(Graphics g) {
+        for (int row = 0; row < 3; row++){
+            for(int col = 0; col < 3; col++){
+                switch(state[row][col]){
+                    case 0:
+                        break;
+                    case 1:
+                        g.setColor(Color.GREEN);
+                        g.fillRect(col * third, row * third, third, third);
+                        break;
+                    case -1:
+                        g.setColor(Color.RED);
+                        g.fillRect(col*third, row*third, third, third);
+                }
+            }
+        }
     }
 }
