@@ -17,6 +17,8 @@ public class Board {
     private static Image x;
     private static Image o;
     private static Image ggez;
+    private static int roundCount = 0;
+    private static int gameOverCount = 0;
 
 
     public Board(){
@@ -32,6 +34,11 @@ public class Board {
     }
 
     private boolean checkWinCon() {
+
+
+        if (roundCount >= 9) {
+            isGameOver = true;
+        }
         // Horizontal Check Win Con
         for (int row = 0; row < 3; row++){
             int rowTotal = 0;
@@ -110,6 +117,7 @@ public class Board {
                     if (boardState[me.getY() / third][me.getX() / third] == 0){
                         boardState[me.getY() / third][me.getX() / third] = 1;
                         player1 = !player1;
+                        roundCount++;
                     }
                 }
                 else{
@@ -117,16 +125,33 @@ public class Board {
                         if (boardState[me.getY() / third][me.getX() / third] == 0){
                             boardState[me.getY() / third][me.getX() / third] = -1;
                             player1 = !player1;
+                            roundCount++;
                         }
                     }
                 }
                 printGameState();
                 isGameOver = checkWinCon();
-                if (isGameOver){
+                if (isGameOver && gameOverCount == 0) {
+                    gameOverCount++;
                     System.out.println("Game is over!");
                 }
+            } else if (gameOverCount == 1) {
+                resetGame();
+                gameOverCount = 0;
+                System.out.println("hi");
             }
         }
+    }
+
+    private void resetGame() {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                boardState[row][col] = 0;
+            }
+        }
+        isGameOver = false;
+        player1 = true;
+        roundCount = 0;
     }
 
     public void tick() {
@@ -137,6 +162,11 @@ public class Board {
         if (starting) {
             g.drawImage(letsplay.getScaledInstance(600, 600, Image.SCALE_SMOOTH), 0, 0, null);
         } else {
+            g.setColor(Color.black);
+            g.fillRect(195,0,10,600);
+            g.fillRect(395,0,10,600);
+            g.fillRect(0,195,600,10);
+            g.fillRect(0,395,600,10);
             //if (!isGameOver) {
                 for (int row = 0; row < 3; row++) {
                     for (int col = 0; col < 3; col++) {
