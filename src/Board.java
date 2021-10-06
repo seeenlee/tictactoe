@@ -1,25 +1,30 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Board {
+    private BufferedImage letsplay;
     final int LENGTH = 3;
-    private int[][] state;
-    private boolean over = false;
+    private int[][] boardState;
+    private boolean isGameOver = true;
     private boolean player1 = true;
     Scanner s = new Scanner(System.in);
     private int third = 200;
+    private boolean starting = true;
+
 
     public Board(){
-        state = new int[LENGTH][LENGTH];
+        boardState = new int[LENGTH][LENGTH];
     }
 
     public void start(){
         printGameState();
-        while(!over){
-//            place(takeInput());
-//            printGameState();
-            over = checkWinCon();
+        while(!isGameOver){
+            isGameOver = checkWinCon();
         }
         System.out.println("Game is over!");
     }
@@ -29,7 +34,7 @@ public class Board {
         for (int row = 0; row < 3; row++){
             int rowTotal = 0;
             for (int col = 0; col < 3; col++){
-                rowTotal += state[row][col];
+                rowTotal += boardState[row][col];
                 if (3 == Math.abs(rowTotal) ){
                     return true;
                 }
@@ -40,7 +45,7 @@ public class Board {
         for (int col = 0; col <3; col++){
             int colTotal = 0;
             for (int row = 0; row < 3; row++){
-                colTotal += state[row][col];
+                colTotal += boardState[row][col];
                 if (Math.abs(colTotal) == 3){
                     return true;
                 }
@@ -50,7 +55,7 @@ public class Board {
         // Left Diagonal Check Win Con
         int ldtotal = 0;
         for (int num = 0; num < 3; num++){
-            ldtotal += state[num][num];
+            ldtotal += boardState[num][num];
             if(Math.abs(ldtotal) == 3){
                 return true;
             }
@@ -59,7 +64,7 @@ public class Board {
         // Right Diagonal Check Win Con
         int rdtotal = 0;
         for (int num = 0; num <3; num++){
-            rdtotal += state[num][2 - num];
+            rdtotal += boardState[num][2 - num];
             if(Math.abs(rdtotal) == 3){
                 return true;
             }
@@ -67,31 +72,10 @@ public class Board {
         return false;
     }
 
-
-    private void place(int input){
-        input--;
-        int row = input/3;
-        int column = input % 3;
-        if(player1) {
-            state[row][column] = 1;
-        }
-        else{
-            state[row][column] = -1;
-        }
-        player1 = !player1;
-    }
-
-    private int takeInput() {
-        System.out.println("Please enter a number to place your marker");
-        int userInput = s.nextInt();
-        s.nextLine();
-        return userInput;
-    }
-
     public void printGameState(){
         for (int row = 0; row < 3; row++){
             for (int col =0; col < 3; col++){
-                switch (state[row][col]) {
+                switch (boardState[row][col]) {
                     case 1:
                         System.out.print("X");
                         break;
@@ -118,18 +102,23 @@ public class Board {
         System.out.println("You just clicked: "+me);
         //while(!over){
             if(player1){
-                state[me.getY() / third][me.getX() / third] = 1;
-                player1 = !player1;
+                if (boardState[me.getY() / third][me.getX() / third] == 0){
+                    boardState[me.getY() / third][me.getX() / third] = 1;
+                    player1 = !player1;
+                }
             }
             else{
-                state[me.getY() / third][me.getX() / third] = -1;
-                player1 = !player1;
+                if (boardState[me.getY() / third][me.getX() / third] == 0){
+                    if (boardState[me.getY() / third][me.getX() / third] == 0){
+                        boardState[me.getY() / third][me.getX() / third] = -1;
+                        player1 = !player1;
+                    }
+                }
             }
             printGameState();
-            over = checkWinCon();
-            if (over){
+            isGameOver = checkWinCon();
+            if (isGameOver){
                 System.out.println("Game is over!");
-                System.exit(0);
             }
         //}
     }
@@ -138,18 +127,20 @@ public class Board {
     }
 
     public void draw(Graphics g) {
-        for (int row = 0; row < 3; row++){
-            for(int col = 0; col < 3; col++){
-                switch(state[row][col]){
-                    case 0:
-                        break;
-                    case 1:
-                        g.setColor(Color.GREEN);
-                        g.fillRect(col * third, row * third, third, third);
-                        break;
-                    case -1:
-                        g.setColor(Color.RED);
-                        g.fillRect(col*third, row*third, third, third);
+        if (!isGameOver) {
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    switch (boardState[row][col]) {
+                        case 0:
+                            break;
+                        case 1:
+                            g.setColor(Color.GREEN);
+                            g.fillRect(col * third, row * third, third, third);
+                            break;
+                        case -1:
+                            g.setColor(Color.RED);
+                            g.fillRect(col * third, row * third, third, third);
+                    }
                 }
             }
         }
