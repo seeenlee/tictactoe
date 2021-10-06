@@ -16,7 +16,7 @@ public class Board {
     private static Image letsplay;
     private static Image x;
     private static Image o;
-    private boolean start = true;
+    private static Image ggez;
 
 
     public Board(){
@@ -137,7 +137,7 @@ public class Board {
         if (starting) {
             g.drawImage(letsplay.getScaledInstance(600, 600, Image.SCALE_SMOOTH), 0, 0, null);
         } else {
-            if (!isGameOver) {
+            //if (!isGameOver) {
                 for (int row = 0; row < 3; row++) {
                     for (int col = 0; col < 3; col++) {
                         switch (boardState[row][col]) {
@@ -147,7 +147,6 @@ public class Board {
 //                                g.setColor(Color.GREEN);
 //                                g.fillRect(col * third, row * third, third, third);
                                 g.drawImage(x.getScaledInstance(200, 200, Image.SCALE_SMOOTH), col * third, row * third, null);
-                                System.out.println("trying");
                                 break;
                             case -1:
 //                                g.setColor(Color.RED);
@@ -159,6 +158,9 @@ public class Board {
                         }
                     }
                 }
+            //}
+            if (isGameOver) {
+                g.drawImage(ggez.getScaledInstance(400, 200, Image.SCALE_SMOOTH), 100, 200, null);
             }
         }
     }
@@ -181,6 +183,13 @@ public class Board {
         if(o == null) {
             try {
                 o = ImageIO.read(new File("o.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(ggez == null) {
+            try {
+                ggez = ImageIO.read(new File("ggez.png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
