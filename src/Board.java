@@ -38,6 +38,7 @@ public class Board {
 
         if (roundCount >= 9) {
             isGameOver = true;
+            return true;
         }
         // Horizontal Check Win Con
         for (int row = 0; row < 3; row++){
