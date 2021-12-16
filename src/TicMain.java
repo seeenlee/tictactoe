@@ -42,10 +42,8 @@ public class TicMain extends JPanel{
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                board.tick();
                 repaint();
             }
-
         });
         timer.start();
     }
